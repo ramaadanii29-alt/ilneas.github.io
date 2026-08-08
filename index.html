@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>SELAMAT</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            font-family: Arial, sans-serif;
+            color: white;
+
+            background:
+                radial-gradient(circle at top, #ff8fab, transparent 40%),
+                linear-gradient(135deg, #ff416c, #8e2de2);
+        }
+
+        /* Kartu utama */
+        .card {
+            position: relative;
+            z-index: 10;
+
+            width: 90%;
+            max-width: 550px;
+            padding: 45px 30px;
+
+            text-align: center;
+
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+
+            border-radius: 30px;
+
+            backdrop-filter: blur(15px);
+
+            box-shadow:
+                0 20px 60px rgba(0, 0, 0, 0.3);
+
+            animation: muncul 1.5s ease;
+        }
+
+        .emoji {
+            font-size: 70px;
+            animation: detak 1.2s infinite;
+        }
+
+        h1 {
+            margin-top: 10px;
+            font-size: 42px;
+            text-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        h2 {
+            margin-top: 10px;
+            font-size: 24px;
+        }
+
+        p {
+            margin-top: 20px;
+            line-height: 1.7;
+            font-size: 18px;
+        }
+
+        button {
+            margin-top: 25px;
+            padding: 14px 28px;
+
+            border: none;
+            border-radius: 30px;
+
+            background: white;
+            color: #e91e63;
+
+            font-size: 17px;
+            font-weight: bold;
+
+            cursor: pointer;
+
+            transition: 0.3s;
+        }
+
+        button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        #pesan {
+            display: none;
+            margin-top: 25px;
+
+            font-size: 19px;
+            font-weight: bold;
+
+            animation: muncul 1s ease;
+        }
+
+        /* Hati */
+        .heart {
+            position: fixed;
+            bottom: -50px;
+
+            color: #ffb3c6;
+
+            font-size: 25px;
+
+            pointer-events: none;
+
+            animation: naik linear forwards;
+
+            z-index: 1;
+        }
+
+        @keyframes naik {
+            0% {
+                transform:
+                    translateY(0)
+                    rotate(0deg)
+                    scale(0.8);
+
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            50% {
+                transform:
+                    translateY(-50vh)
+                    rotate(180deg)
+                    scale(1.2);
+            }
+
+            100% {
+                transform:
+                    translateY(-110vh)
+                    rotate(360deg)
+                    scale(0.8);
+
+                opacity: 0;
+            }
+        }
+
+        @keyframes detak {
+            0%, 100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.2);
+            }
+        }
+
+        @keyframes muncul {
+            from {
+                opacity: 0;
+                transform: translateY(40px) scale(0.8);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* Confetti */
+        .confetti {
+            position: fixed;
+            top: -20px;
+
+            width: 10px;
+            height: 10px;
+
+            z-index: 20;
+
+            animation: jatuh 4s linear forwards;
+        }
+
+        @keyframes jatuh {
+            to {
+                transform:
+                    translateY(110vh)
+                    rotate(720deg);
+            }
+        }
+
+        /* Tombol musik */
+        .music-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+
+            z-index: 50;
+
+            margin: 0;
+
+            padding: 12px 18px;
+
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Musik -->
+    <audio id="musik" loop>
+        <source src="musik.mp3" type="audio/mpeg">
+    </audio>
+
+    <button class="music-button" onclick="toggleMusic()">
+        🎵 Musik
+    </button>
+
+
+    <!-- Kartu ucapan -->
+    <div class="card">
+
+        <div class="emoji">
+            ❤️
+        </div>
+
+        <h1>HALOOOO </h1>
+
+        <h2>Selamat Anda Telah Memenangkan Undian</h2>
+
+        <p>
+            Undian Berupa Uang Tunai Sebesar 5M
+            <br><br>
+
+            KLIK TOMBOL KLAIM DIBAWAH
+            
+            <br>
+
+            
+            
+        </p>
+
+        <button onclick="KLAIM()">
+            🎁 KLAIM
+        </button>
+
+        <div id="pesan">
+            AWOKAWOKAWOK CEBOLL
+            <br><br>
+            MAU AJA DIKIBULIN, WKWK POLO POLO
+        </div>
+
+    </div>
+
+
+    <script>
+
+        /* =========================
+           MUSIK
+        ========================= */
+
+        const musik = document.getElementById("musik");
+
+        function toggleMusic() {
+
+            if (musik.paused) {
+
+                musik.play();
+
+            } else {
+
+                musik.pause();
+
+            }
+
+        }
+
+
+        /* =========================
+           HATI MELAYANG
+        ========================= */
+
+        function buatHati() {
+
+            const heart = document.createElement("div");
+
+            heart.classList.add("heart");
+
+            const hati = [
+                "❤️",
+                "💖",
+                "💕",
+                "💗",
+                "💓",
+                "💘",
+                "💝"
+            ];
+
+            heart.innerHTML =
+                hati[Math.floor(Math.random() * hati.length)];
+
+            heart.style.left =
+                Math.random() * 100 + "vw";
+
+            heart.style.fontSize =
+                (Math.random() * 25 + 15) + "px";
+
+            heart.style.animationDuration =
+                (Math.random() * 4 + 4) + "s";
+
+            document.body.appendChild(heart);
+
+            setTimeout(() => {
+
+                heart.remove();
+
+            }, 8000);
+        }
+
+
+        /* Membuat hati terus muncul */
+
+        setInterval(buatHati, 350);
+
+
+        /* =========================
+           TOMBOL KLAIM
+        ========================= */
+
+        function KLAIM() {
+
+            document.getElementById("pesan").style.display = "block";
+
+            // Mulai musik setelah user menekan tombol
+            musik.play().catch(() => {});
+
+            // Confetti
+            for (let i = 0; i < 100; i++) {
+
+                const confetti =
+                    document.createElement("div");
+
+                confetti.classList.add("confetti");
+
+                confetti.style.left =
+                    Math.random() * 100 + "vw";
+
+                const warna = [
+                    "#ff4757",
+                    "#ffa502",
+                    "#2ed573",
+                    "#1e90ff",
+                    "#ffffff",
+                    "#ff6b81",
+                    "#eccc68"
+                ];
+
+                confetti.style.backgroundColor =
+                    warna[
+                        Math.floor(Math.random() * warna.length)
+                    ];
+
+                confetti.style.animationDuration =
+                    (Math.random() * 2 + 2) + "s";
+
+                document.body.appendChild(confetti);
+
+                setTimeout(() => {
+
+                    confetti.remove();
+
+                }, 5000);
+            }
+        }
+
+    </script>
+
+</body>
+</html>
