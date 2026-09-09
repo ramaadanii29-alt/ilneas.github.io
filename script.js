@@ -3,7 +3,7 @@
    ========================================================= */
 
 const CONFIG = {
-  recipientName: "AMEL",          // nama orang yang diberi kejutan
+  recipientName: "AMEl",          // nama orang yang diberi kejutan
   songTitle: "SHAPE OF MY HEART",               // judul lagu
   songArtist: "BACKSTREET BOYS",          // nama penyanyi
 
@@ -11,8 +11,8 @@ const CONFIG = {
 
 Semoga yang disemogakan tersemogakan pokoknya yaa atur sendiri lah!`,
 
-  wishesText: `Happy birthday sekali lagi! Semoga......................
-  doa sendiri aja yaa dah gede juga "UMURNYA" orangnya mah kecil WKWKWK
+  wishesText: `Happy birthday sekali lagi! Semoga...............
+  doa sendiri aja yaa dah gede juga "UMURNYA" orangnya mah kecil WKWKWK.
 
 Intinya ya Selamat Ulang Tahun yang ke - 18 Sesilia Syirani
 Tetap Jadi Orang Baik Dan Normal yaa.`,
