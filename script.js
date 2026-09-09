@@ -3,7 +3,7 @@
    ========================================================= */
 
 const CONFIG = {
-  recipientName: "AMEl",          // nama orang yang diberi kejutan
+  recipientName: "AMEL",          // nama orang yang diberi kejutan
   songTitle: "SHAPE OF MY HEART",               // judul lagu
   songArtist: "BACKSTREET BOYS",          // nama penyanyi
 
