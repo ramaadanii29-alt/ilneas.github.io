@@ -11,8 +11,8 @@ const CONFIG = {
 
 Semoga yang disemogakan tersemogakan pokoknya yaa atur sendiri lah!`,
 
-  wishesText: `Happy birthday sekali lagi! Semoga...............
-  doa sendiri dah gede juga "UMURNYA" orangnya mah kecil WKWKWK
+  wishesText: `Happy birthday sekali lagi! Semoga......................
+  doa sendiri aja yaa dah gede juga "UMURNYA" orangnya mah kecil WKWKWK
 
 Intinya ya Selamat Ulang Tahun yang ke - 18 Sesilia Syirani
 Tetap Jadi Orang Baik Dan Normal yaa.`,
