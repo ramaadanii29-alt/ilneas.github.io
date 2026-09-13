@@ -1,407 +1,677 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Special Birthday Gift For Youu</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kapsul Waktu Bintang</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  /* ====================================================
-     GANTI DATA DI SINI (lihat juga script.js di bagian bawah)
-     ==================================================== */
-
-  :root {
-    --bg-top: #bcd8f7;
-    --bg-bottom: #8fb8ea;
-    --card-bg: #ffffff;
-    --accent: #3b7ddb;
-    --text-dark: #23395d;
-    --text-soft: #5c7ba8;
+  :root{
+    --bg-deep:#0a1030;
+    --bg-mid:#141d47;
+    --bg-soft:#1e2a5e;
+    --gold:#f0b429;
+    --gold-soft:#f6d186;
+    --cream:#f5efe0;
+    --cream-dim:#c9c4b4;
+    --ember:#e2704e;
+    --ease:cubic-bezier(.22,.8,.35,1);
   }
 
-  * {
-    box-sizing: border-box;
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+
+  body{
+    background:var(--bg-deep);
+    color:var(--cream);
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+    overflow-x:hidden;
+    position:relative;
   }
 
-  html, body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  #bg-canvas{
+    position:fixed;
+    inset:0;
+    width:100%;
+    height:100%;
+    z-index:0;
+    background:radial-gradient(ellipse at 50% 20%, var(--bg-soft), var(--bg-deep) 70%);
   }
 
-  body {
-    background: radial-gradient(circle at 20% 10%, var(--bg-top), var(--bg-bottom));
-    background-attachment: fixed;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    overflow-x: hidden;
+  #confetti-canvas{
+    position:fixed;
+    inset:0;
+    width:100%;
+    height:100%;
+    z-index:5;
+    pointer-events:none;
   }
 
-  /* pola titik-titik di background, seperti di video */
-  body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    background-image: radial-gradient(rgba(255,255,255,0.5) 1.5px, transparent 1.5px);
-    background-size: 26px 26px;
-    pointer-events: none;
+  #music-toggle{
+    position:fixed;
+    top:20px;
+    right:20px;
+    z-index:10;
+    width:52px;
+    height:52px;
+    border-radius:50%;
+    border:1px solid rgba(240,180,41,0.4);
+    background:rgba(20,29,71,0.7);
+    backdrop-filter:blur(6px);
+    color:var(--gold-soft);
+    font-size:20px;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition:transform .3s var(--ease), box-shadow .3s var(--ease);
+  }
+  #music-toggle:hover{transform:scale(1.06);}
+  #music-toggle:focus-visible{outline:2px solid var(--gold); outline-offset:3px;}
+  #music-toggle.playing{
+    box-shadow:0 0 0 0 rgba(240,180,41,.5);
+    animation:pulse 1.6s ease-out infinite;
+  }
+  @keyframes pulse{
+    0%{box-shadow:0 0 0 0 rgba(240,180,41,.45);}
+    70%{box-shadow:0 0 0 14px rgba(240,180,41,0);}
+    100%{box-shadow:0 0 0 0 rgba(240,180,41,0);}
   }
 
-  .phone-frame {
-    width: 100%;
-    max-width: 420px;
-    min-height: 100vh;
-    padding: 48px 22px 40px;
-    position: relative;
-    z-index: 1;
+  main{
+    position:relative;
+    z-index:2;
   }
 
-  /* ---------- LOADING SCREEN ---------- */
-  #loading-screen {
-    position: fixed;
-    inset: 0;
-    background: linear-gradient(180deg, #16233f, #0d1730);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    z-index: 50;
-    transition: opacity 0.6s ease, visibility 0.6s ease;
+  .scene{
+    min-height:100vh;
+    width:100%;
+    display:none;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:48px 20px;
+    opacity:0;
+    transition:opacity .7s var(--ease);
+  }
+  .scene.active{
+    display:flex;
+    opacity:1;
   }
 
-  #loading-screen.hidden {
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
+  .eyebrow-note{
+    font-size:14px;
+    color:var(--cream-dim);
+    max-width:420px;
+    line-height:1.6;
+    margin:0 0 8px;
   }
 
-  .loading-text {
-    color: #cfe0ff;
-    letter-spacing: 10px;
-    font-size: 15px;
-    font-weight: 600;
-    margin-bottom: 40px;
+  h1{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:clamp(32px,6vw,58px);
+    margin:0 0 6px;
+    color:var(--cream);
+  }
+  h1 em{
+    font-style:italic;
+    color:var(--gold-soft);
+    font-weight:500;
+  }
+  h2{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:clamp(26px,5vw,42px);
+    margin:0 0 18px;
   }
 
-  .loading-text .dots::after {
-    content: '...';
-    animation: dots 1.2s steps(4, end) infinite;
+  p{
+    line-height:1.7;
+    max-width:520px;
+    color:var(--cream-dim);
+    font-size:16px;
   }
 
-  @keyframes dots {
-    0%, 20% { content: ''; }
-    40% { content: '.'; }
-    60% { content: '..'; }
-    80%, 100% { content: '...'; }
+  /* ---------- SCENE 1: CAPSULE ---------- */
+  #capsule-wrap{
+    margin:36px 0 18px;
+    cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
+  }
+  #capsule-wrap:focus-visible{outline:2px solid var(--gold); outline-offset:6px; border-radius:50%;}
+
+  .capsule-glow{
+    width:150px;
+    height:150px;
+    border-radius:50%;
+    background:radial-gradient(circle at 40% 35%, var(--gold-soft), var(--gold) 55%, #a8790f 100%);
+    box-shadow:0 0 60px rgba(240,180,41,.35), inset 0 -10px 20px rgba(0,0,0,.25);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition:transform .25s var(--ease), background .5s var(--ease), box-shadow .5s var(--ease), border-radius .5s var(--ease);
+    position:relative;
+  }
+  #capsule-wrap:hover .capsule-glow{transform:scale(1.04) rotate(-2deg);}
+  .capsule-glow.shake{animation:shake .4s;}
+  @keyframes shake{
+    0%,100%{transform:translateX(0) rotate(0);}
+    25%{transform:translateX(-6px) rotate(-3deg);}
+    75%{transform:translateX(6px) rotate(3deg);}
+  }
+  .capsule-glow svg{width:64px;height:64px;fill:var(--bg-deep);}
+
+  #dig-progress{
+    font-size:14px;
+    color:var(--gold-soft);
+    letter-spacing:.02em;
+    margin-top:4px;
   }
 
-  .buddies {
-    display: flex;
-    align-items: flex-end;
-    gap: 26px;
-    border-bottom: 3px solid #7a2e44;
-    padding-bottom: 0;
+  .memory-stack{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    margin-top:28px;
+    max-width:480px;
+  }
+  .memory-card{
+    background:rgba(255,255,255,0.04);
+    border:1px solid rgba(240,180,41,.2);
+    border-radius:4px;
+    padding:16px 20px;
+    font-family:'Fraunces',serif;
+    font-style:italic;
+    font-size:17px;
+    color:var(--cream);
+    opacity:0;
+    transform:translateY(10px);
+    animation:fadeUp .6s var(--ease) forwards;
+  }
+  @keyframes fadeUp{
+    to{opacity:1; transform:translateY(0);}
   }
 
-  .buddy {
-    width: 46px;
-    height: 78px;
-    border-radius: 8px;
-    border: 3px solid #7a2e44;
-    position: relative;
-    animation: bounce 0.9s ease-in-out infinite;
+  .btn{
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:15px;
+    color:var(--bg-deep);
+    background:var(--gold-soft);
+    border:none;
+    padding:13px 30px;
+    border-radius:2px;
+    cursor:pointer;
+    margin-top:30px;
+    transition:transform .2s var(--ease), background .2s var(--ease);
+  }
+  .btn:hover{background:var(--gold); transform:translateY(-2px);}
+  .btn:focus-visible{outline:2px solid var(--cream); outline-offset:3px;}
+  .btn.ghost{
+    background:transparent;
+    color:var(--gold-soft);
+    border:1px solid rgba(240,180,41,.4);
+  }
+  .btn.ghost:hover{background:rgba(240,180,41,.1);}
+
+  /* ---------- SCENE 2: CAKE ---------- */
+  .cake{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    margin:20px 0 8px;
+  }
+  .candles{
+    display:flex;
+    gap:9px;
+    margin-bottom:-3px;
+    z-index:2;
+  }
+  .candle{
+    width:6px;
+    height:22px;
+    background:linear-gradient(var(--gold-soft), #d99b1f);
+    border-radius:2px;
+    position:relative;
+    cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .candle:focus-visible{outline:2px solid var(--cream); outline-offset:4px;}
+  .flame{
+    position:absolute;
+    top:-11px;
+    left:50%;
+    transform:translateX(-50%);
+    width:7px;
+    height:11px;
+    background:radial-gradient(circle at 50% 70%, #fff2c0, var(--ember) 70%);
+    border-radius:50% 50% 50% 50% / 60% 60% 40% 40%;
+    animation:flicker 1s ease-in-out infinite alternate;
+    transition:opacity .3s, transform .3s;
+  }
+  @keyframes flicker{
+    from{transform:translateX(-50%) scale(1);}
+    to{transform:translateX(-50%) scale(0.85) rotate(3deg);}
+  }
+  .candle.blown .flame{
+    animation:extinguish 1.4s ease-out forwards;
+  }
+  @keyframes extinguish{
+    0%{transform:translateX(-50%) scale(1) rotate(0); opacity:1;}
+    10%{transform:translateX(-68%) scale(1.25) rotate(-14deg); opacity:1;}
+    20%{transform:translateX(-32%) scale(1.15) rotate(12deg); opacity:1;}
+    32%{transform:translateX(-60%) scale(0.9) rotate(-9deg); opacity:.9;}
+    45%{transform:translateX(-38%) scale(1.05) rotate(8deg); opacity:.85;}
+    58%{transform:translateX(-55%) scale(0.6) rotate(-6deg); opacity:.55;}
+    72%{transform:translateX(-45%) scale(0.4) rotate(5deg); opacity:.32;}
+    86%{transform:translateX(-50%) scale(0.18) rotate(-3deg); opacity:.14;}
+    100%{transform:translateX(-50%) scale(0) translateY(3px); opacity:0;}
+  }
+  .smoke{
+    position:absolute;
+    top:-18px;
+    left:50%;
+    width:4px;
+    height:4px;
+    border-radius:50%;
+    background:rgba(255,255,255,.55);
+    opacity:0;
+    pointer-events:none;
+  }
+  .candle.blown .smoke.s1{animation:smokeUpLeft 1.3s ease-out .9s forwards;}
+  .candle.blown .smoke.s2{animation:smokeUpMid 1.5s ease-out .98s forwards;}
+  .candle.blown .smoke.s3{animation:smokeUpRight 1.35s ease-out 1.06s forwards;}
+  @keyframes smokeUpLeft{
+    0%{opacity:.65; transform:translate(-50%,0) scale(1);}
+    100%{opacity:0; transform:translate(calc(-50% - 16px),-38px) scale(3.5);}
+  }
+  @keyframes smokeUpMid{
+    0%{opacity:.65; transform:translate(-50%,0) scale(1);}
+    100%{opacity:0; transform:translate(-50%,-44px) scale(4);}
+  }
+  @keyframes smokeUpRight{
+    0%{opacity:.65; transform:translate(-50%,0) scale(1);}
+    100%{opacity:0; transform:translate(calc(-50% + 16px),-36px) scale(3.5);}
+  }
+  .tier{
+    background:linear-gradient(180deg, #fff 0%, #f3e9d8 100%);
+    border-radius:6px;
+  }
+  .tier3{width:95px; height:30px;}
+  .tier2{width:130px; height:34px; margin-top:-3px;}
+  .tier1{width:170px; height:36px; margin-top:-3px;}
+  .plate{width:200px; height:8px; background:rgba(255,255,255,.15); border-radius:50%; margin-top:6px;}
+
+  /* ---------- SCENE 3: FINAL ---------- */
+  #constellation-wrap svg{width:min(340px,80vw); height:auto; overflow:visible;}
+  .const-line{
+    fill:none;
+    stroke:var(--gold-soft);
+    stroke-width:1.4;
+    stroke-linecap:round;
+    stroke-dasharray:600;
+    stroke-dashoffset:600;
+    animation:draw 2.6s var(--ease) forwards;
+  }
+  @keyframes draw{ to{stroke-dashoffset:0;} }
+  .const-star{
+    fill:var(--gold-soft);
+    opacity:0;
+    animation:starPop .5s var(--ease) forwards;
+  }
+  @keyframes starPop{
+    to{opacity:1;}
   }
 
-  .buddy.pink { background: #f7b3c2; animation-delay: 0s; }
-  .buddy.white { background: #fefefe; height: 96px; animation-delay: 0.15s; }
-
-  .buddy::before {
-    content: "";
-    position: absolute;
-    top: -12px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 3px;
-    height: 12px;
-    background: #7a2e44;
+  .final-message{
+    font-family:'Fraunces',serif;
+    font-style:italic;
+    font-size:19px;
+    color:var(--cream);
+    max-width:480px;
+    opacity:0;
+    animation:fadeUp 1s var(--ease) 0.4s forwards;
+  }
+  .signature{
+    margin-top:6px;
+    font-size:14px;
+    color:var(--gold-soft);
+    opacity:0;
+    animation:fadeUp 1s var(--ease) 0.8s forwards;
   }
 
-  .buddy .eyes {
-    position: absolute;
-    top: 18px;
-    left: 0;
-    right: 0;
-    text-align: center;
-    font-size: 13px;
-    color: #7a2e44;
-    font-weight: 700;
+  footer{
+    position:relative;
+    z-index:2;
+    text-align:center;
+    font-size:12px;
+    color:rgba(245,239,224,.35);
+    padding:18px 20px 30px;
   }
 
-  @keyframes bounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
-  }
-
-  /* ---------- MAIN CONTENT ---------- */
-  #main-content {
-    opacity: 0;
-    transform: translateY(12px);
-    transition: opacity 0.7s ease, transform 0.7s ease;
-    text-align: center;
-  }
-
-  #main-content.show {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  .headline {
-    font-family: 'Brush Script MT', cursive;
-    font-size: 44px;
-    color: #ffffff;
-    text-shadow: 0 3px 10px rgba(20, 50, 90, 0.35);
-    margin: 0 0 6px;
-  }
-
-  .subline {
-    color: rgba(255,255,255,0.85);
-    font-size: 13px;
-    letter-spacing: 3px;
-    font-weight: 600;
-    margin: 0 0 30px;
-  }
-
-  /* music player pill */
-  .music-card {
-    background: rgba(255,255,255,0.55);
-    backdrop-filter: blur(6px);
-    border: 1px solid rgba(255,255,255,0.7);
-    border-radius: 40px;
-    padding: 14px 18px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    text-align: left;
-    margin-bottom: 26px;
-  }
-
-  .music-info .song-title {
-    font-weight: 700;
-    color: var(--text-dark);
-    font-size: 15px;
-  }
-
-  .music-info .song-artist {
-    color: #476085;
-    font-size: 12px;
-  }
-
-  .play-btn {
-    width: 42px;
-    height: 42px;
-    border-radius: 50%;
-    background: var(--accent);
-    border: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 16px;
-    cursor: pointer;
-    flex-shrink: 0;
-  }
-
-  /* two gift cards */
-  .cards-row {
-    display: flex;
-    gap: 16px;
-  }
-
-  .gift-card {
-    flex: 1;
-    background: rgba(255,255,255,0.55);
-    border: 1px solid rgba(255,255,255,0.7);
-    border-radius: 22px;
-    padding: 26px 12px;
-    cursor: pointer;
-    transition: transform 0.2s ease, background 0.2s ease;
-  }
-
-  .gift-card:hover {
-    transform: translateY(-4px);
-    background: rgba(255,255,255,0.7);
-  }
-
-  .gift-card .icon-badge {
-    width: 56px;
-    height: 56px;
-    border-radius: 16px;
-    background: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 12px;
-    font-size: 26px;
-    box-shadow: 0 6px 14px rgba(20,50,90,0.12);
-  }
-
-  .gift-card .label {
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    color: var(--text-dark);
-  }
-
-  .hint {
-    margin-top: 26px;
-    color: rgba(255,255,255,0.75);
-    font-size: 11px;
-    letter-spacing: 3px;
-  }
-
-  /* ---------- MODAL (letter / wishes) ---------- */
-  .modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(10, 25, 50, 0.45);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 30px 20px;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
-    z-index: 60;
-  }
-
-  .modal-overlay.open {
-    opacity: 1;
-    visibility: visible;
-  }
-
-  .modal-card {
-    background: repeating-linear-gradient(
-      white,
-      white 27px,
-      #dfe9fb 28px
-    );
-    border: 2px dashed #9db8e0;
-    border-radius: 18px;
-    max-width: 380px;
-    width: 100%;
-    max-height: 80vh;
-    overflow-y: auto;
-    padding: 26px 22px 30px;
-    position: relative;
-    transform: scale(0.92);
-    transition: transform 0.3s ease;
-  }
-
-  .modal-overlay.open .modal-card {
-    transform: scale(1);
-  }
-
-  .modal-close {
-    position: absolute;
-    top: 14px;
-    right: 16px;
-    background: none;
-    border: none;
-    font-size: 18px;
-    color: #7c8db0;
-    cursor: pointer;
-  }
-
-  .modal-title {
-    font-family: 'Brush Script MT', cursive;
-    font-size: 28px;
-    color: var(--accent);
-    margin: 6px 0 18px;
-  }
-
-  .modal-text {
-    color: #37455e;
-    font-size: 14.5px;
-    line-height: 28px;
-    white-space: pre-line;
-    text-align: left;
-  }
-
-  @media (max-width: 380px) {
-    .headline { font-size: 36px; }
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important;}
   }
 </style>
 </head>
 <body>
 
-  <!-- ====== LOADING SCREEN ====== -->
-  <div id="loading-screen">
-    <div class="loading-text"><span class="dots">LOADING</span></div>
-    <div class="buddies">
-      <div class="buddy pink"><div class="eyes">&gt; &lt;</div></div>
-      <div class="buddy white"><div class="eyes">&bull; &bull;</div></div>
-    </div>
-  </div>
+<canvas id="bg-canvas"></canvas>
+<canvas id="confetti-canvas"></canvas>
 
-  <!-- ====== MAIN CONTENT ====== -->
-  <div class="phone-frame">
-    <div id="main-content">
-      <h1 class="headline">It's Your Day!</h1>
-      <p class="subline" id="recipient-line">A SPECIAL GIFT FOR ...</p>
+<button id="music-toggle" aria-label="Nyalakan musik" title="Nyalakan musik">🎵</button>
 
-      <div class="music-card">
-        <div class="music-info">
-          <div class="song-title" id="song-title">Judul Lagu</div>
-          <div class="song-artist" id="song-artist">Nama Penyanyi</div>
-        </div>
-        <button class="play-btn" id="play-btn" aria-label="Putar lagu">▶</button>
-      </div>
+<main>
 
-      <div class="cards-row">
-        <div class="gift-card" id="open-letter">
-          <div class="icon-badge">✉️</div>
-          <div class="label">BIRTHDAY LETTER</div>
-        </div>
-        <div class="gift-card" id="open-wishes">
-          <div class="icon-badge">⭐</div>
-          <div class="label">SPECIAL WISHES</div>
-        </div>
-      </div>
+  <!-- SCENE 1 : DIG THE CAPSULE -->
+  <section class="scene active" id="scene-dig">
+    <p class="eyebrow-note">Sebuah kapsul waktu terkubur di bawah langit malam ini —</p>
+    <h1>untuk <em id="name-slot-1">Kamu</em></h1>
+    <p>Di dalamnya tersimpan beberapa kenangan. Ketuk kapsulnya tiga kali untuk menggalinya satu per satu.</p>
 
-      <p class="hint">TAP THE CARDS TO OPEN</p>
-    </div>
-  </div>
-
-  <!-- ====== MODAL: BIRTHDAY LETTER ====== -->
-  <div class="modal-overlay" id="letter-modal">
-    <div class="modal-card">
-      <button class="modal-close" data-close>✕</button>
-      <h2 class="modal-title">A Letter For You</h2>
-      <div class="modal-text" id="letter-text">
-Tulis surat ulang tahunmu di sini...
+    <div id="capsule-wrap" role="button" tabindex="0" aria-label="Gali kapsul waktu">
+      <div class="capsule-glow" id="capsule-glow">
+        <svg viewBox="0 0 24 24"><path d="M12 2 3 7v6c0 5 4 8 9 9 5-1 9-4 9-9V7l-9-5z"/></svg>
       </div>
     </div>
-  </div>
+    <div id="dig-progress">0 dari 3 galian</div>
 
-  <!-- ====== MODAL: SPECIAL WISHES ====== -->
-  <div class="modal-overlay" id="wishes-modal">
-    <div class="modal-card">
-      <button class="modal-close" data-close>✕</button>
-      <h2 class="modal-title">My Wishes ✨</h2>
-      <div class="modal-text" id="wishes-text">
-Tulis harapan/doa ulang tahunmu di sini...
-      </div>
+    <div class="memory-stack" id="memory-stack"></div>
+  </section>
+
+  <!-- SCENE 2 : BLOW THE CANDLES -->
+  <section class="scene" id="scene-cake">
+    <p class="eyebrow-note">Satu tradisi kecil sebelum kejutan terakhir —</p>
+    <h2>Buat satu permohonan</h2>
+    <p>Tiup lilinnya dengan mengetuk satu per satu.</p>
+
+    <div class="cake">
+      <div class="candles" id="candles"></div>
+      <div class="tier tier3"></div>
+      <div class="tier tier2"></div>
+      <div class="tier tier1"></div>
+      <div class="plate"></div>
     </div>
-  </div>
+    <div id="cake-hint" style="margin-top:18px;font-size:13px;color:var(--cream-dim);">0 dari 5 lilin tertiup</div>
+  </section>
 
-  <audio id="bg-audio" loop>
-    <!-- taruh file musikmu di folder yang sama lalu ganti "musik.mp3" -->
-    <source src="musik.mp3" type="audio/mpeg" />
-  </audio>
+  <!-- SCENE 3 : FINAL CONSTELLATION -->
+  <section class="scene" id="scene-final">
+    <p class="eyebrow-note">Semua kenangan tadi membentuk satu rasi —</p>
+    <div id="constellation-wrap"></div>
+    <h2>Selamat Ulang Tahun, <span id="name-slot-2">Kamu</span> 🎉</h2>
+    <p class="final-message" id="final-message-slot"></p>
+    <p class="signature" id="signature-slot"></p>
+  </section>
 
-  <script src="script.js"></script>
+</main>
+
+<footer>dibuat dengan sepenuh hati, khusus untuk hari ini</footer>
+
+<script>
+/* =========================================================
+   EDIT BAGIAN INI SESUAI KEINGINANMU
+   ========================================================= */
+const CONFIG = {
+  name: "Sesilia Syirani", // ganti dengan nama penerima
+  memories: [
+    "Kenangan pertama: Di Kenangan Pertama Ini Aku Mau Kamu Ngingat Dulu Kamu Adalah Bayi Yang Lemah Yang Tangisnya Bisa Membuat Seisi Rumah Berkumpul. Lalu perlahan kamu tumbuh jadi anak kecil yang penuh rasa ingin tahu — yang tertawa lepas untuk hal-hal sederhana, dan yang setiap langkah kecilnya selalu ditunggu dengan bangga.",
+    "Kenangan kedua: Kemudian Datang Masa Saat Dunia Mulai Terasa Lebih Besar. Kamu Mulai Punya Pendapat Sendiri, Mencari Tahu Siapa Dirimu, Dan Belajar Berdiri Di Atas Kaki Sendiri Meski Kadang Masih Goyah. Masa Yang Tidak Selalu Mudah, Tapi Di Situlah Kamu Perlahan Menjadi Dirimu Yang Sekarang.",
+    "Kenangan ketiga: Dan Sekarang, Di Usia Remaja Ini, Langkahmu Makin Mantap Menuju Siapa Kamu Akan Menjadi Kelak. Masa Depan Mungkin Masih Penuh Tanda Tanya, Tapi Satu Hal Yang Pasti: Apa Pun Jalan Yang Kamu Pilih, Akan Selalu Ada Dukungan Dan Doa Yang Menyertaimu."
+  ],
+  candleCount: 5,
+  finalMessage: "Semoga tahun ini membawa lebih banyak hal yang membuatmu tersenyum tanpa alasan, tenang tanpa harus mencari, dan dicintai persis apa adanya. Selamat ulang tahun.",
+  signature: "— dengan hangat, untukmu"
+};
+/* ========================================================= */
+
+document.getElementById('name-slot-1').textContent = CONFIG.name;
+document.getElementById('name-slot-2').textContent = CONFIG.name;
+document.getElementById('final-message-slot').textContent = CONFIG.finalMessage;
+document.getElementById('signature-slot').textContent = CONFIG.signature;
+
+/* ---------- STARRY BACKGROUND ---------- */
+const bgCanvas = document.getElementById('bg-canvas');
+const bgCtx = bgCanvas.getContext('2d');
+let stars = [];
+function resizeBg(){
+  bgCanvas.width = window.innerWidth;
+  bgCanvas.height = document.documentElement.scrollHeight;
+  stars = [];
+  const count = Math.floor((bgCanvas.width * bgCanvas.height) / 9000);
+  for(let i=0;i<count;i++){
+    stars.push({
+      x: Math.random()*bgCanvas.width,
+      y: Math.random()*bgCanvas.height,
+      r: Math.random()*1.3 + 0.3,
+      phase: Math.random()*Math.PI*2,
+      speed: Math.random()*0.02 + 0.008
+    });
+  }
+}
+function drawStars(t){
+  bgCtx.clearRect(0,0,bgCanvas.width,bgCanvas.height);
+  bgCtx.fillStyle = '#f6d186';
+  for(const s of stars){
+    const alpha = 0.35 + 0.55 * Math.abs(Math.sin(s.phase + t*s.speed));
+    bgCtx.globalAlpha = alpha;
+    bgCtx.beginPath();
+    bgCtx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+    bgCtx.fill();
+  }
+  bgCtx.globalAlpha = 1;
+  requestAnimationFrame(drawStars);
+}
+resizeBg();
+window.addEventListener('resize', resizeBg);
+requestAnimationFrame(drawStars);
+
+/* ---------- SCENE SWITCHING ---------- */
+function goToScene(id){
+  document.querySelectorAll('.scene').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({top: document.getElementById(id).offsetTop, behavior:'smooth'});
+}
+
+/* ---------- SCENE 1: DIG LOGIC ---------- */
+let digCount = 0;
+const capsuleWrap = document.getElementById('capsule-wrap');
+const capsuleGlow = document.getElementById('capsule-glow');
+const digProgress = document.getElementById('dig-progress');
+const memoryStack = document.getElementById('memory-stack');
+
+// palet warna & bentuk yang dipakai bergantian tiap kapsul diketuk
+const capsulePalette = [
+  { c1:'#f6d186', c2:'#f0b429' }, // emas (awal)
+  { c1:'#f7b6a3', c2:'#e2704e' }, // ember
+  { c1:'#b9d7ff', c2:'#5b8def' }, // biru bintang
+  { c1:'#d7c4f7', c2:'#8b5cf6' }, // ungu
+  { c1:'#c8f5d0', c2:'#34c77b' }  // hijau aurora
+];
+const capsuleShapes = [
+  { borderRadius:'50%', clipPath:'none' }, // bulat
+  { borderRadius:'42% 58% 63% 37% / 47% 41% 59% 53%', clipPath:'none' }, // blob
+  { borderRadius:'0', clipPath:'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)' }, // berlian
+  { borderRadius:'0', clipPath:'polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)' }, // heksagon
+  { borderRadius:'0', clipPath:'polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)' } // bintang
+];
+let lastPick = 0;
+
+function hexToRgba(hex, alpha){
+  const v = parseInt(hex.replace('#',''), 16);
+  return `rgba(${(v>>16)&255},${(v>>8)&255},${v&255},${alpha})`;
+}
+
+function shuffleCapsule(){
+  let pick;
+  do { pick = Math.floor(Math.random()*capsulePalette.length); } while(pick === lastPick && capsulePalette.length > 1);
+  lastPick = pick;
+  const color = capsulePalette[pick];
+  const shape = capsuleShapes[Math.floor(Math.random()*capsuleShapes.length)];
+
+  capsuleGlow.style.background = `radial-gradient(circle at 40% 35%, ${color.c1}, ${color.c2} 60%, #10162f 100%)`;
+  capsuleGlow.style.boxShadow = `0 0 60px ${hexToRgba(color.c2, .45)}, inset 0 -10px 20px rgba(0,0,0,.25)`;
+  capsuleGlow.style.borderRadius = shape.borderRadius;
+  capsuleGlow.style.clipPath = shape.clipPath;
+}
+
+function dig(){
+  if(digCount >= CONFIG.memories.length) return;
+  capsuleGlow.classList.remove('shake');
+  void capsuleGlow.offsetWidth;
+  capsuleGlow.classList.add('shake');
+  shuffleCapsule();
+
+  const card = document.createElement('div');
+  card.className = 'memory-card';
+  card.textContent = CONFIG.memories[digCount];
+  memoryStack.appendChild(card);
+
+  digCount++;
+  digProgress.textContent = `${digCount} dari ${CONFIG.memories.length} galian`;
+
+  if(digCount >= CONFIG.memories.length){
+    digProgress.textContent = "Semua kenangan sudah tergali";
+    setTimeout(() => goToScene('scene-cake'), 2500);
+  }
+}
+capsuleWrap.addEventListener('click', dig);
+capsuleWrap.addEventListener('keydown', e => { if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); dig(); }});
+
+/* ---------- SCENE 2: CANDLES ---------- */
+const candlesWrap = document.getElementById('candles');
+const cakeHint = document.getElementById('cake-hint');
+let blownCount = 0;
+
+for(let i=0;i<CONFIG.candleCount;i++){
+  const c = document.createElement('div');
+  c.className = 'candle';
+  c.tabIndex = 0;
+  c.setAttribute('role','button');
+  c.setAttribute('aria-label', `Tiup lilin ${i+1}`);
+  c.innerHTML = '<span class="flame"></span><span class="smoke s1"></span><span class="smoke s2"></span><span class="smoke s3"></span>';
+  c.addEventListener('click', () => blow(c));
+  c.addEventListener('keydown', e => { if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); blow(c); }});
+  candlesWrap.appendChild(c);
+}
+
+function blow(candleEl){
+  if(candleEl.classList.contains('blown')) return;
+  candleEl.classList.add('blown');
+  blownCount++;
+  cakeHint.textContent = `${blownCount} dari ${CONFIG.candleCount} lilin tertiup`;
+  if(blownCount >= CONFIG.candleCount){
+    cakeHint.textContent = "Permohonan terkirim ✨";
+    setTimeout(() => {
+      goToScene('scene-final');
+      buildConstellation();
+      launchConfetti();
+    }, 2500);
+  }
+}
+
+/* ---------- SCENE 3: CONSTELLATION (heart shape) ---------- */
+function buildConstellation(){
+  const wrap = document.getElementById('constellation-wrap');
+  if(wrap.dataset.built) return;
+  wrap.dataset.built = "1";
+
+  const numPoints = 16;
+  const points = [];
+  for(let i=0;i<numPoints;i++){
+    const t = (i/numPoints) * Math.PI * 2;
+    const hx = 16*Math.pow(Math.sin(t),3);
+    const hy = 13*Math.cos(t) - 5*Math.cos(2*t) - 2*Math.cos(3*t) - Math.cos(4*t);
+    points.push({ x: 170 + hx*8, y: 150 - hy*8 });
+  }
+
+  let pathD = `M ${points[0].x} ${points[0].y} `;
+  for(let i=1;i<points.length;i++){
+    pathD += `L ${points[i].x} ${points[i].y} `;
+  }
+  pathD += 'Z';
+
+  let starsSvg = '';
+  points.forEach((p, i) => {
+    starsSvg += `<circle class="const-star" cx="${p.x}" cy="${p.y}" r="3" style="animation-delay:${1.6 + i*0.06}s"/>`;
+  });
+
+  wrap.innerHTML = `
+    <svg viewBox="0 0 340 300">
+      <path class="const-line" d="${pathD}" />
+      ${starsSvg}
+    </svg>
+  `;
+}
+
+/* ---------- CONFETTI ---------- */
+const confettiCanvas = document.getElementById('confetti-canvas');
+const cctx = confettiCanvas.getContext('2d');
+function launchConfetti(){
+  confettiCanvas.width = window.innerWidth;
+  confettiCanvas.height = window.innerHeight;
+  const colors = ['#f0b429','#f6d186','#e2704e','#f5efe0'];
+  const pieces = Array.from({length: 90}, () => ({
+    x: Math.random()*confettiCanvas.width,
+    y: -20 - Math.random()*confettiCanvas.height*0.3,
+    r: Math.random()*5+3,
+    speedY: Math.random()*2.5+1.5,
+    speedX: (Math.random()-0.5)*2,
+    rot: Math.random()*360,
+    rotSpeed: (Math.random()-0.5)*8,
+    color: colors[Math.floor(Math.random()*colors.length)]
+  }));
+  let frame = 0;
+  const maxFrames = 260;
+  function step(){
+    frame++;
+    cctx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height);
+    pieces.forEach(p => {
+      p.x += p.speedX;
+      p.y += p.speedY;
+      p.rot += p.rotSpeed;
+      cctx.save();
+      cctx.translate(p.x,p.y);
+      cctx.rotate(p.rot*Math.PI/180);
+      cctx.fillStyle = p.color;
+      cctx.fillRect(-p.r/2,-p.r/2,p.r,p.r*1.6);
+      cctx.restore();
+    });
+    if(frame < maxFrames){
+      requestAnimationFrame(step);
+    } else {
+      cctx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height);
+    }
+  }
+  step();
+}
+
+/* ---------- MUSIC (file musik.mp3, taruh di folder yang sama) ---------- */
+const audio = new Audio('musik.mp3');
+audio.loop = true;
+
+const musicBtn = document.getElementById('music-toggle');
+let musicPlaying = false;
+
+musicBtn.addEventListener('click', () => {
+  musicPlaying = !musicPlaying;
+  if(musicPlaying){
+    audio.play();
+    musicBtn.textContent = '🔊';
+    musicBtn.classList.add('playing');
+    musicBtn.setAttribute('aria-label','Matikan musik');
+  } else {
+    audio.pause();
+    musicBtn.textContent = '🎵';
+    musicBtn.classList.remove('playing');
+    musicBtn.setAttribute('aria-label','Nyalakan musik');
+  }
+});
+</script>
 </body>
 </html>
